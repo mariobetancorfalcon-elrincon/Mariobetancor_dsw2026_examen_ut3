@@ -1,9 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import {env} from '../config/env.js'
+import { AppError } from '../errors/AppError.js';
 
 export function logger(req: Request, res: Response, next: NextFunction): void {
 
-  if(env.LOG == "ON"){
+  if(env.LOG.toUpperCase() == "ON"){
   const start = performance.now(); // Empieza a medir lo que tarda la petición
 
   res.on('finish', () => {
@@ -19,6 +20,8 @@ export function logger(req: Request, res: Response, next: NextFunction): void {
     };
     console.log(JSON.stringify(entry)); // Loguea en pantalla la información de la petición
   });
- };
+ }else if(env.LOG.toUpperCase() == "OF"){
+  throw new AppError(400, "Error log esta en OFF")
+ }
  next();
 }
