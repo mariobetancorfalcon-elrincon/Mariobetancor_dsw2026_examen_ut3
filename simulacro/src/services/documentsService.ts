@@ -26,7 +26,7 @@ const documents: Document[] = [
     title: 'Normas de convivencia',
     description: '',
     createdAt: '2026-09-01T08:00:00.000Z',
-  },
+  }
 ];
 
 // GET /api/v1/admin/documents?page=1&limit=20

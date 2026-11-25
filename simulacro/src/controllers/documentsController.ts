@@ -57,6 +57,15 @@ export function update(req: Request, res: Response, next: NextFunction): void {
     if (!document) {
       throw new AppError(404, `Document with id '${req.params.documentId}' not found`, 'NOT_FOUND');
     }
+
+    if(typeof title !== 'string'){
+      throw new AppError(400, `El titulo contiene un valor que no es una cadena `, 'BAD_REQUEST')
+    }
+
+    if(title.trim().length == 0){
+      throw new AppError(400, `Carcater de espacio detectado`, 'BAD_REQUEST')
+    }
+
     res.json({ data: document });
   } catch (err) {
     next(err);

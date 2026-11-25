@@ -10,9 +10,14 @@ http:
     type: json
     data: |-
       {
-        "title":"Y"
+        "title":""
       }  
   auth: inherit
+
+runtime:
+  variables:
+    - name: baseUrl
+      value: http://localhost:3000
 
 settings:
   encodeUrl: true
