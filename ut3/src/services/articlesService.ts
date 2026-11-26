@@ -18,8 +18,17 @@ export interface ArticleChanges {
 // The in-memory array now lives here, not in the routes.
 const articles: Article[] = [];
 
-export function list(page: number, limit: number) {
+export function list(page: number, limit: number, sinDescripcion? : number) {
   const start = (page - 1) * limit;
+  if(sinDescripcion == 1){
+    const filteredDocuments = articles.filter(
+      (filtro) => filtro.description === 'Sin descripcion',
+    );
+    return{
+      data: filteredDocuments.slice(start, start + limit ),
+      pagination: { page, limit, total: articles.length },
+    };
+  };
   return {
     data: articles.slice(start, start + limit),
     pagination: { page, limit, total: articles.length },
@@ -31,6 +40,11 @@ export function getById(id: string): Article | undefined {
 }
 
 export function create(title: string, description: string): Article {
+  if(description.trim().length === 0){
+    description = "Sin descripcion"
+  }else if (!description){
+    description = "Sin descripcion"
+  }
   const article: Article = {
     id: randomUUID(),
     title,
@@ -54,3 +68,4 @@ export function update(id: string, changes: ArticleChanges): Article | undefined
   }
   return article;
 }
+

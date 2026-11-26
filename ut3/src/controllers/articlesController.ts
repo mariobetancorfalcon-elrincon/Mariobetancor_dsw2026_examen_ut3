@@ -3,16 +3,19 @@
 // errorHandler with next(err).
 
 import type { NextFunction, Request, Response } from 'express';
+import { env } from '../config/env.js';
 
 import { AppError } from '../errors/AppError.js';
 import * as articlesService from '../services/articlesService.js';
+import { AppErrorDescription } from '../errors/AppErrorDescription.js';
 
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
     // req.query always arrives as text: the controller converts it.
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? 20);
-    res.json(articlesService.list(page, limit));
+    const sinDepuracion = Number(req.query.limit);
+    res.json(articlesService.list(page, limit, sinDepuracion));
   } catch (err) {
     next(err);
   }
@@ -31,20 +34,26 @@ export function getById(req: Request, res: Response, next: NextFunction): void {
 }
 
 export function create(req: Request, res: Response, next: NextFunction): void {
-  console.log('[4] articlesController.create', req.requestId);
-
+  if(env.DEPURACION == 1){
+    console.log('[4] articlesController.create', req.requestId);
+  }
   try {
     const { title, description } = req.body;
     if (!title || typeof title !== 'string') {
       throw new AppError(400, 'Missing required field: title', 'BAD_REQUEST');
+    }
+
+    if(String(description) === "ERROR"){
+      throw new AppErrorDescription(400, 'Description most not contain ERROR', 'INVALID_DESCRIPTION')
     }
     const article = articlesService.create(
       title.trim(),
       typeof description === 'string' ? description.trim() : '',
     );
 
-    console.log('[5] Respuesta preparada: 201', req.requestId, { data: article });
-    
+    if(env.DEPURACION == 1){
+      console.log('[5] Respuesta preparada: 201', req.requestId, { data: article });
+    }
     res.status(201).json({ data: article });
   } catch (err) {
     next(err);

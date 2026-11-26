@@ -1,8 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
+import { env } from '../config/env.js';
 
 export function logger(req: Request, res: Response, next: NextFunction): void {
-  console.log('[2] logger: entrada', req.requestId);
-
+  if(env.DEPURACION == 1){
+    console.log('[2] logger: entrada', req.requestId);
+  };
   const start = performance.now(); // Empieza a medir lo que tarda la petición
 
   res.on('finish', () => {
@@ -16,7 +18,9 @@ export function logger(req: Request, res: Response, next: NextFunction): void {
       durationMs: duration,
       timestamp: new Date().toISOString(),
     };
-    console.log(JSON.stringify(entry)); // Loguea en pantalla la información de la petición
+    if(env.DEPURACION == 1){
+      console.log(JSON.stringify(entry)); // Loguea en pantalla la información de la petición
+    }; 
   });
 
   next();
